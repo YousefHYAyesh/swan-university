@@ -1,0 +1,64 @@
+@import "tailwindcss";
+@import "@fontsource/ibm-plex-sans/400.css";
+@import "@fontsource/ibm-plex-sans/500.css";
+@import "@fontsource/ibm-plex-sans/600.css";
+@import "@fontsource/ibm-plex-sans/700.css";
+
+@theme {
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink: #14213d;
+  --color-ink-soft: #3d4b66;
+  --color-muted: #66758c;
+  --color-lake: #1f6f8b;
+  --color-lake-deep: #17566c;
+  --color-lake-wash: #e6f1f5;
+  --color-paper: #f6f8fa;
+  --color-line: #dce3ea;
+  --color-amber: #c98a12;
+  --color-amber-wash: #fbf3e2;
+  --color-danger: #b4232f;
+  --color-danger-wash: #fbeaec;
+  --color-ok: #2f7d4f;
+  --color-ok-wash: #e8f4ec;
+
+  /* Letter-grade ramp: lake blue for top grades, amber for conditional passes, red for fails */
+  --color-g-aa: #145a73;
+  --color-g-ba: #1f6f8b;
+  --color-g-bb: #2c879f;
+  --color-g-cb: #4b9a8c;
+  --color-g-cc: #6c9a5a;
+  --color-g-dc: #b98a1c;
+  --color-g-dd: #c9751d;
+  --color-g-fd: #c2492f;
+  --color-g-ff: #a3222c;
+  --color-g-na: #7a1f2a;
+
+  --radius-control: 6px;
+  --radius-panel: 10px;
+}
+
+@layer base {
+  html {
+    font-feature-settings: "tnum" 1;
+  }
+  body {
+    @apply bg-paper text-ink antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-lake);
+    outline-offset: 2px;
+  }
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+}
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: white; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

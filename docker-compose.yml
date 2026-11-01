@@ -1,0 +1,42 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: swan
+      POSTGRES_PASSWORD: swan
+      POSTGRES_DB: swan
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U swan"]
+      interval: 3s
+      retries: 20
+
+  # Runs once: applies migrations and loads demo data into an empty database.
+  setup:
+    build:
+      context: .
+      target: builder
+    command: sh -c "npm run db:migrate && npm run db:seed"
+    environment:
+      DATABASE_URL: postgres://swan:swan@db:5432/swan
+      SEED_IF_EMPTY: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://swan:swan@db:5432/swan
+      SESSION_SECRET: ${SESSION_SECRET:-change-me-to-a-long-random-string-in-production}
+      DEMO_MODE: "true"
+      APP_URL: http://localhost:3000
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+
+volumes:
+  pgdata:

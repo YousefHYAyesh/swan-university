@@ -1,0 +1,21 @@
+# dependencies
+/node_modules
+
+# next.js
+/.next/
+/out/
+*.tsbuildinfo
+
+# tests
+/test-results/
+/playwright-report/
+/coverage
+
+# env: keep the example, never real secrets
+.env*
+!.env.example
+
+# misc
+.DS_Store
+*.pem
+npm-debug.log*
