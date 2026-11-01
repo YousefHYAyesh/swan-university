@@ -1,12 +1,21 @@
 import { expect, test } from "@playwright/test";
+import { Pool } from "pg";
 import { acceptDialogs, signIn } from "./helpers";
 
 test("gradebook rejects a score above the maximum and saves nothing", async ({ page }) => {
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  const { rows } = await pool.query(
+    `select s.id from sections s
+       join users u on u.id = s.instructor_id
+       join terms t on t.id = s.term_id
+      where u.email = 'professor@swan.edu' and t.is_current and s.grade_status = 'DRAFT'
+      limit 1`,
+  );
+  await pool.end();
   await signIn(page, "professor@swan.edu");
-  await page.getByRole("link", { name: /SEN121/ }).first().click();
-  const first = page.getByRole("textbox").first();
-  const max = Number((await page.locator("thead th").nth(1).textContent())!.match(/\/(\d+)/)![1]);
-  await first.fill(String(max + 5));
+  await page.goto(`/professor/sections/${rows[0].id}`);
+  // No assessment allows more than 1000 points.
+  await page.getByRole("textbox").first().fill("5000");
   await page.getByRole("button", { name: "Save scores" }).click();
   await expect(page.getByText(/need fixing; nothing was saved/)).toBeVisible();
 });
